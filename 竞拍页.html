@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>竞拍页</title>
+
+	</head>
+
+	<body>
+		<div class="auctionPageApp">
+			<el-row :gutter="20" justify="center">
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+				<el-col :span="18">
+					<el-row :gutter="20" justify="center">
+						<el-col :span="14">
+							<table class="table table-bordered table-hover ">
+								<tbody>
+									<tr>
+										<td>名称:</td>
+										<td>{{auctionGoods.auctionname}}</td>
+									</tr>
+									<tr>
+										<td>描述:</td>
+										<td>{{auctionGoods.auctiondesc}}</td>
+									</tr>
+									<tr>
+										<td>开始时间:</td>
+										<td>{{auctionGoods.auctionstarttime}}</td>
+									</tr>
+									<tr>
+										<td>结束时间:</td>
+										<td>{{auctionGoods.auctionendtime}}</td>
+									</tr>
+									<tr>
+										<td>起拍价:</td>
+										<td>{{auctionGoods.auctionstartprice}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</el-col>
+						<el-col :span="2">
+
+						</el-col>
+						<el-col :span="8">
+							<el-image style="width: 100%; height: 183px" :src="auctionGoods.pic" fit="scale-down"></el-image>
+						</el-col>
+					</el-row>
+				</el-col>
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+			</el-row>
+			<el-row :gutter="20" justify="center">
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+				<el-col :span="18" style="border:solid 1px black; border-radius: 0px;">
+					<el-form ref="form" v-if="isEnd&&!isStart" :model="sizeForm" label-width="70px" size="mini">
+						<el-row :gutter="20" justify="center" style="margin-top: 8px;">
+							<el-col :span="6">
+								<el-form-item label="出价:">
+									<el-input v-model="sizeForm.auctionprice"></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="2">
+								<el-button type="primary" @click="onSubmit" size="mini">提交</el-button>
+							</el-col>
+							<el-col :span="16">
+							</el-col>
+						</el-row>
+					</el-form>
+					<h1 v-if="!isEnd">该拍卖已结束</h1>
+					<h1 v-if="isStart">该拍卖还没有开始</h1>
+				</el-col>
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+			</el-row>
+			<el-row :gutter="20" justify="center">
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+				<el-col :span="18">
+					<div class="">
+						<span id="">出价记录</span>
+						<template>
+							<el-table :data="list" stripe style="width: 100%" border>
+								<el-table-column prop="username" label="姓名">
+								</el-table-column>
+								<el-table-column prop="auctiontime" label="时间">
+								</el-table-column>
+								<el-table-column prop="auctionprice" label="价格">
+								</el-table-column>
+							</el-table>
+						</template>
+					</div>
+				</el-col>
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+			</el-row>
+		</div>
+	</body>
+	<script>
+		var auctionPageApp = new Vue({
+			data: {
+				//JSON.parse(window.sessionStorage.getItem("goods"))
+				isEnd: false,
+				isStart: false,
+				auctionGoods: JSON.parse(window.sessionStorage.getItem("goods")),
+				sizeForm: {
+					userid: indexApp.user.userid,
+					auctionid: '',
+					auctiontime: '',
+					auctionprice: '',
+					username: indexApp.user.username
+				},
+				list: [],
+				tableData: [{
+					date: '2016-05-02',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1518 弄'
+				}, {
+					date: '2016-05-04',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1517 弄'
+				}, {
+					date: '2016-05-01',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1519 弄'
+				}, {
+					date: '2016-05-03',
+					name: '王小虎',
+					address: '上海市普陀区金沙江路 1516 弄'
+				}]
+			},
+			methods: {
+				onSubmit() {
+					if(this.list.length == 0) {
+						if(Number(this.sizeForm.auctionprice) < Number(this.auctionGoods.auctionstartprice)) {
+							alert('不能低于起拍价！');
+							return false;
+						}
+					} else {
+						if(Number(this.sizeForm.auctionprice) < Number(this.auctionGoods.auctionstartprice)) {
+							alert('不能低于起拍价！');
+							return false;
+						} else if(Number(this.sizeForm.auctionprice) <= Number(this.list[0].auctionprice)) {
+							alert('不能低于或等于最近一位出的价格！');
+							return false;
+						}
+					}
+					_this = this;
+					var date = new Date();
+					var year = date.getFullYear();
+					var month = date.getMonth() + 1;
+					var day = date.getDate();
+					var hour = date.getHours();
+					var minute = date.getMinutes();
+					var second = date.getSeconds();
+					//这样写显示时间在1~9会挤占空间；所以要在1~9的数字前补零;
+					if(hour < 10) {
+						hour = '0' + hour;
+					}
+					if(minute < 10) {
+						minute = '0' + minute;
+					}
+					if(second < 10) {
+						second = '0' + second;
+					}
+					if(day < 10) {
+						day = '0' + day;
+					}
+					_this.sizeForm.auctiontime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+					_this.sizeForm.auctionid = _this.auctionGoods.auctionid;
+					$.ajax(`http://127.0.0.1:8080/Auction/api/reds/save`, {
+						type: "post",
+						contentType: "application/json",
+						data: JSON.stringify(_this.sizeForm),
+						dataType: "json",
+						success(msg) {
+							if(msg > 0) {
+								var str = JSON.stringify(_this.sizeForm);
+								_this.list.splice(0, 0, JSON.parse(str));
+								_this.sizeForm.auctionprice = '';
+								alert('竞拍成功！');
+							}
+						}
+					});
+				}
+			},
+			mounted() {
+				_this = this;
+				var date = new Date();
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				var day = date.getDate();
+				var hour = date.getHours();
+				var minute = date.getMinutes();
+				var second = date.getSeconds();
+				//这样写显示时间在1~9会挤占空间；所以要在1~9的数字前补零;
+				if(hour < 10) {
+					hour = '0' + hour;
+				}
+				if(minute < 10) {
+					minute = '0' + minute;
+				}
+				if(second < 10) {
+					second = '0' + second;
+				}
+				var time_now = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+				var date1 =  new Date(Date.parse(time_now.replace(/-/g, "/")));
+				var date2 =  new Date(Date.parse(_this.auctionGoods.auctionendtime.replace(/-/g, "/")));
+				var date3 =  new Date(Date.parse(_this.auctionGoods.auctionstarttime.replace(/-/g, "/")));
+				_this.isEnd = date1 < date2;
+				if(_this.isEnd) {
+					_this.isStart = date1 < date3;
+				}
+				$.ajax(`http://127.0.0.1:8080/Auction/api/reds/findList/${_this.auctionGoods.auctionid}`, {
+					type: "post",
+					contentType: "application/json",
+					dataType: "json",
+					success(msg) {
+						_this.list = msg;
+					}
+				});
+			}
+		}).$mount(".auctionPageApp")
+	</script>
+
+</html>

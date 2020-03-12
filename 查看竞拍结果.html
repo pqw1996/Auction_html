@@ -3,182 +3,98 @@
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>无标题文档</title>
-		<link rel="stylesheet" href="css/index.css" />
-		<script type="text/javascript" src="js/vue.js"></script>
-		<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
-		<script type="text/javascript" src="js/jq_ajax_config.js"></script>
-		<style>
-			.el-row {
-				margin-bottom: 20px;
-				&:last-child {
-					margin-bottom: 0;
-				}
-			}
-			
-			.el-col {
-				border-radius: 4px;
-			}
-			
-			.bg-purple-dark {
-				background: #99a9bf;
-			}
-			
-			.bg-purple {
-				background: #d3dce6;
-			}
-			
-			.bg-purple-light {
-				background: #e5e9f2;
-			}
-			
-			.grid-content {
-				border-radius: 4px;
-				min-height: 36px;
-			}
-			
-			.row-bg {
-				padding: 10px 0;
-				background-color: #f9fafc;
-			}
-			
-			h2,
-			h4 {
-				display: inline-block;
-			}
-			
-			.cell {
-				text-align: center;
-			}
-		</style>
+		<title>查看竞拍结果</title>		
 	</head>
 
 	<body>
-		<div id="lookApp">
-			<el-row>
-				<el-col :span="14" :offset="5">
-					<div class="grid-content">
-						<h2>拍卖结束的商品</h2>
-						<h4 style="float: right;">当前用户是：
-							<el-link type="primary">张三</el-link>
-						</h4>
-						<hr style="clear: both;" />
-						<el-table :data="tableData1" stripe style="width: 100%">
-							<el-table-column prop="auctionName" label="名称">
-							</el-table-column>
-							<el-table-column prop="auctionStartTime" label="开始时间">
-							</el-table-column>
-							<el-table-column prop="auctionEndTime" label="结束时间">
-							</el-table-column>
-							<el-table-column prop="auctionStartPrice" label="起拍价">
-							</el-table-column>
-							<el-table-column prop="auctionPrice" label="成交价">
-							</el-table-column>
-							<el-table-column prop="userName" label="买家">
-								<template slot-scope="scope">
-									<el-link type="danger">{{scope.row.userName}}</el-link>
-								</template>
-							</el-table-column>
-						</el-table>
+
+		<div class="findResultAtione">
+			<el-row :gutter="20" justify="center">
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+				<el-col :span="18">
+					<div class="">
+						<span id="">拍卖结束的商品</span>
+						<template>
+							<el-table :data="dePte" stripe style="width: 100%" border>
+								<el-table-column prop="deptid" label="名称"></el-table-column>
+								<el-table-column prop="deptid" label="开始时间"></el-table-column>
+								<el-table-column prop="deptid" label="结束时间"></el-table-column>
+								<el-table-column prop="deptid" label="起拍价"></el-table-column>
+								<el-table-column prop="deptid" label="成交价"></el-table-column>
+								<el-table-column prop="deptid" label="买家"></el-table-column>
+								<el-table-column label="出家记录">
+									<template slot-scope="temp">
+										<el-button size="mini" @click="deemps(temp.row.emps)">查看出价记录</el-button>
+										<el-drawer title="参与竞拍人" :visible.sync="table" direction="btt" size="50%" ref="drawer">
+											<el-table :data="emps" border>
+												<el-table-column prop="empName" label="姓名"></el-table-column>
+												<el-table-column prop="bid" label="出价价格'"></el-table-column>
+											</el-table>
+										</el-drawer>
+									</template>
+								</el-table-column>
+							</el-table>
+						</template>
 					</div>
 				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span="14" :offset="5">
-					<div class="grid-content">
-						<h2>拍卖中的商品</h2>
-						<el-table :data="tableData2" stripe style="width: 100%">
-							<el-table-column prop="auctionName" label="名称">
-							</el-table-column>
-							<el-table-column prop="auctionStartTime" label="开始时间">
-							</el-table-column>
-							<el-table-column prop="auctionEndTime" label="结束时间">
-							</el-table-column>
-							<el-table-column prop="auctionStartPrice" label="起拍价">
-							</el-table-column>
-							<el-table-column prop="list" label="出价记录">
-								<template slot-scope="scope">
-									<span v-for="i in scope.row.list" style="color: blue;">
-										{{i.userName}}&nbsp;{{i.auctionPrice}}元<br />
-									</span>
-								</template>
-							</el-table-column>
-						</el-table>
-					</div>
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
 				</el-col>
 			</el-row>
 		</div>
 	</body>
-	<script type="text/javascript" src="js/index.js"></script>
 	<script>
-		var indexApp = new Vue({
+		var findResultAtione = new Vue({
 			data: {
-				tableData1: [{
-					auctionName: "国画",
-					auctionStartTime: "2020-03-03",
-					auctionEndTime: "2020-03-03",
-					auctionStartPrice: "100",
-					auctionPrice: "400",
-					userName: "张三"
+				dePte: [{
+					deptid: "1"
 				}, {
-					auctionName: "国画",
-					auctionStartTime: "2020-03-03",
-					auctionEndTime: "2020-03-03",
-					auctionStartPrice: "100",
-					auctionPrice: "400",
-					userName: "张三"
-				}, {
-					auctionName: "国画",
-					auctionStartTime: "2020-03-03",
-					auctionEndTime: "2020-03-03",
-					auctionStartPrice: "100",
-					auctionPrice: "400",
-					userName: "张三"
-				}, {
-					auctionName: "国画",
-					auctionStartTime: "2020-03-03",
-					auctionEndTime: "2020-03-03",
-					auctionStartPrice: "100",
-					auctionPrice: "400",
-					userName: "张三"
+					deptid: "2"
 				}],
-				tableData2: [{
-					auctionName: "国画",
-					auctionStartTime: "2020-03-03",
-					auctionEndTime: "2020-03-03",
-					auctionStartPrice: "100",
-					list: [{
-							userName: "张三",
-							auctionPrice: 300
-						},
-						{
-							userName: "李四",
-							auctionPrice: 300
-						}
-					]
-				}, {
-					auctionName: "国画",
-					auctionStartTime: "2020-03-03",
-					auctionEndTime: "2020-03-03",
-					auctionStartPrice: "100",
-					list: [{
-							userName: "张三",
-							auctionPrice: 300
-						},
-						{
-							userName: "李四",
-							auctionPrice: 300
-						}
-					]
-				}]
+				table: false,
+				emps: []
 			},
 			methods: {
-
+				deemps(emps) {
+					this.table = true;
+					this.emps = emps;
+				},
+				removeEmp(empid) {
+					let _this = this;
+					this.$confirm(`确认删除员工编号为:${empid}？`)
+						.then(_ => {
+							$.ajax({
+								type: "delete",
+								url: `http://127.0.0.1:8080/api/DepteServlets/emp/${empid}`,
+								dataType: "JSON",
+								success: function(data) {
+									console.log(data)
+									if(data.code == "200") {
+										//验证成功跳转页面
+										_this.$message({
+											message: data.msg,
+											type: 'success'
+										});
+										_this.goToDate();
+									} else if(data.code == "300") {
+										_this.$message({
+											message: data.msg,
+											type: 'success'
+										});
+										_this.table = false;
+									}
+									//关闭Drawer的方法   需要引用ref 然后调用closeDrawer()方法
+									_this.$refs.drawer.closeDrawer();
+								}
+							});
+						})
+						.catch(_ => {});
+				}
 			},
-			mounted() {
-
-			}
-		}).$mount('#lookApp');
+			mounted() {}
+		}).$mount(".findResultAtione");
 	</script>
 
 </html>

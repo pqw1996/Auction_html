@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>竞拍首页</title>
+		<style type="text/css">
+			.el-header,
+			.el-footer {
+				background-color: #FFF;
+				color: #333;
+				text-align: center;
+				line-height: 60px;
+			}
+			
+			.el-aside {
+				background-color: #D3DCE6;
+				color: #333;
+				text-align: center;
+				line-height: 200px;
+			}
+			
+			.el-main {
+				background-color: #FFF;
+				color: #333;
+				text-align: center;
+				/*line-height: 160px;*/
+			}
+			
+			body>.el-container {
+				margin-bottom: 40px;
+			}
+			
+			* {
+				padding: 0px;
+				margin: 0px;
+			}
+			
+			.el-row {}
+			
+			.el-col {
+				border-radius: 4px;
+			}
+			
+			.grid-content {
+				border-radius: 4px;
+				min-height: 36px;
+			}
+			
+			.row-bg {
+				padding: 10px 0;
+				background-color: #FFF;
+			}
+			/**
+			 * 卡片的样式
+			 */
+			
+			.el-carousel__item h3 {
+				color: #475669;
+				font-size: 14px;
+				opacity: 0.75;
+				line-height: 200px;
+				margin: 0;
+			}
+			
+			.el-carousel__item:nth-child(2n) {
+				background-color: #99a9bf;
+			}
+			
+			.el-carousel__item:nth-child(2n+1) {
+				background-color: #d3dce6;
+			}
+		</style>
+		<link rel="stylesheet" href="css/index.css" />
+		<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+		<script type="text/javascript" src="js/vue.js"></script>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+	</head>
+
+	<body>
+		<div class="indexApp">
+			<el-container style='height:95vh; border: 1px solid #eee'>
+				<el-header style='border-bottom: 1px solid #eee'>
+					<el-row :gutter="20" justify="center">
+						<el-col :span="6">
+							<el-link href="竞拍首页.html">
+								<h3>在线拍卖系统</h3></el-link>
+						</el-col>
+						<el-col :span="12">
+							<div class="grid-content bg-purple">
+								<el-menu class="el-menu-demo" mode="horizontal">
+									<el-menu-item index="3" @click="showView('拍卖品列表页1.html')">今日拍卖</el-menu-item>
+									<el-menu-item index="2" v-if="user != null" @click="showView('拍卖商品管理页1.html')">个人中心</el-menu-item>
+								</el-menu>
+							</div>
+						</el-col>
+						<el-col :span="6">
+							<div class="grid-content bg-purple">
+								<el-menu class="el-menu-demo" mode="horizontal">
+									<el-menu-item index="1" @click="showView('竞拍者登录1.html')" v-if="user ==null">登录</el-menu-item>
+									<el-menu-item index="2" v-if="user != null" @click="loginOut">注销</el-menu-item>
+								</el-menu>
+							</div>
+						</el-col>
+					</el-row>
+				</el-header>
+				<el-main style="padding:0px 20px; margin-top: 20px;">
+					<el-row :gutter="20" justify="center">
+						<el-col :span="3">
+							<div class="grid-content bg-purple"></div>
+						</el-col>
+						<el-col :span="18">
+							<div class="">
+								<template>
+									<el-carousel :interval="4000" type="card" height="200px">
+										<el-carousel-item v-for="(item,i) in pageList.list" :key="item.auctionid">
+											<div @click="goAuction('竞拍页.html',pageList.list[i])">
+												<el-image :src="item.pic" fit="contain"></el-image>
+											</div>
+										</el-carousel-item>
+									</el-carousel>
+								</template>
+							</div>
+						</el-col>
+						<el-col :span="3">
+							<div class="grid-content bg-purple"></div>
+						</el-col>
+					</el-row>
+					<el-row :gutter="20" justify="center">
+						<el-col :span="3">
+							<div class="grid-content bg-purple"></div>
+						</el-col>
+						<el-col :span="18">
+							<div class="">
+								<span id="">交易成功列表</span>
+								<template>
+									<el-table :data="pageList.list" stripe style="width: 100%" border>
+										<el-table-column prop="auctionname" label="名称">
+										</el-table-column>
+										<el-table-column prop="auctiondesc" label="描述">
+										</el-table-column>
+										<el-table-column prop="auctionstarttime" label="开始时间">
+										</el-table-column>
+										<el-table-column prop="auctionendtime" label="结束时间">
+										</el-table-column>
+										<el-table-column prop="transactionprice" label="成交价">
+										</el-table-column>
+										</<el-table>
+								</template>
+							</div>
+						</el-col>
+						<el-col :span="3">
+							<div class="grid-content bg-purple"></div>
+						</el-col>
+					</el-row>
+				</el-main>
+				<el-footer style='height:10%;'>
+					<el-row :gutter="20" justify="center">
+						<el-col :span="24">
+							<div class="grid-content bg-purple">科技改变命运</div>
+						</el-col>
+					</el-row>
+				</el-footer>
+			</el-container>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script>
+		var indexApp = new Vue({
+			data: {
+				user: JSON.parse(window.sessionStorage.getItem("user")),
+				pageList: {},
+				sizeForm: {
+					auctionname: '',
+					auctionstarttime: '',
+					auctionendtime: '',
+					auctiondesc: '',
+					auctionstartprice: ''
+				}
+			},
+			methods: {
+				showView(url) {
+					$('.el-main').load(url);
+				},
+				loginOut() {
+					if(confirm('是否注销？')) {
+						sessionStorage.removeItem("user");
+						this.user = null;
+						alert('注销成功！');
+						location.reload();
+					}
+				},
+				goAuction(url, goods) {
+					if(this.user == null) {
+						alert('请先登录');
+						this.showView('竞拍者登录1.html');
+						return;
+					}
+					window.sessionStorage.setItem("goods", JSON.stringify(goods))
+					indexApp.showView(url);
+				}
+			},
+			mounted() {
+				_this = this;
+				var date = new Date();
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				var day = date.getDate();
+				var hour = date.getHours();
+				var minute = date.getMinutes();
+				var second = date.getSeconds();
+				//这样写显示时间在1~9会挤占空间；所以要在1~9的数字前补零;
+				if(hour < 10) {
+					hour = '0' + hour;
+				}
+				if(minute < 10) {
+					minute = '0' + minute;
+				}
+				if(second < 10) {
+					second = '0' + second;
+				}
+				_this.sizeForm.auctionendtime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+				$.ajax(`http://127.0.0.1:8080/Auction/api/items/pageList/${1}/${6}`, {
+					type: "post",
+					contentType: "application/json",
+					data: JSON.stringify(_this.sizeForm),
+					dataType: "json",
+					success(msg) {
+						_this.pageList = msg;
+					}
+				});
+			}
+		}).$mount(".indexApp");
+	</script>
+
+</html>

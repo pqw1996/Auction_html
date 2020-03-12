@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>拍卖品列表页</title>
+		<style type="text/css">
+			.el-header,
+			.el-footer {
+				background-color: #FFF;
+				color: #333;
+				text-align: center;
+				line-height: 60px;
+			}
+			
+			.el-aside {
+				background-color: #D3DCE6;
+				color: #333;
+				text-align: center;
+				line-height: 200px;
+			}
+			
+			.el-main {
+				background-color: #FFF;
+				color: #333;
+				text-align: center;
+				/*line-height: 160px;*/
+			}
+			
+			body>.el-container {
+				margin-bottom: 40px;
+			}
+			
+			* {
+				padding: 0px;
+				margin: 0px;
+			}
+			
+			.el-row {}
+			
+			.el-col {
+				border-radius: 4px;
+			}
+			
+			.grid-content {
+				border-radius: 4px;
+				min-height: 36px;
+			}
+			
+			.row-bg {
+				padding: 10px 0;
+				background-color: #FFF;
+			}
+			/**
+			 * 卡片的样式
+			 */
+			
+			.el-carousel__item h3 {
+				color: #475669;
+				font-size: 14px;
+				opacity: 0.75;
+				line-height: 200px;
+				margin: 0;
+			}
+			
+			.el-carousel__item:nth-child(2n) {
+				background-color: #99a9bf;
+			}
+			
+			.el-carousel__item:nth-child(2n+1) {
+				background-color: #d3dce6;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="managementApp" style="margin-top: 20px;">
+			</template>
+			<el-row :gutter="20" justify="center">
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+				<el-col :span="18">
+					<el-form ref="form" :model="sizeForm" label-width="70px" size="mini">
+						<el-row :gutter="24" justify="center">
+							<el-col :span="5">
+								<el-form-item label="名称">
+									<el-input v-model="sizeForm.auctionname"></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="4">
+								<el-form-item label="描述">
+									<el-input v-model="sizeForm.auctiondesc"></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="8">
+								<el-form-item label="活动时间">
+									<el-col :span="11">
+										<el-date-picker type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="开始时间" v-model="sizeForm.auctionstarttime" style="width: 100%;"></el-date-picker>
+									</el-col>
+									<el-col class="line" :span="1">-</el-col>
+									<el-col :span="11">
+										<el-date-picker ype="date" placeholder="结束时间" format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="sizeForm.auctionendtime" style="width: 100%;"></el-time-picker>
+									</el-col>
+								</el-form-item>
+							</el-col>
+							<el-col :span="4">
+								<el-form-item label="起拍价">
+									<el-input v-model="sizeForm.auctionstartprice "></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="3">
+								<el-form-item size="mini">
+									<el-button type="primary" @click="onSubmit">查询</el-button>
+								</el-form-item>
+							</el-col>
+						</el-row>
+					</el-form>
+				</el-col>
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+			</el-row>
+			<el-row :gutter="20" justify="center">
+				<el-col :span="3">
+					<div class="grid-content bg-purple"></div>
+				</el-col>
+				<el-col :span="19">
+					<div class="">
+						<template>
+							<el-table :data="pageList.list" stripe style="width: 100%" border>
+								<el-table-column prop="auctionname" label="名称">
+								</el-table-column>
+								<el-table-column prop="auctiondesc" label="描述">
+								</el-table-column>
+								<el-table-column prop="auctionstarttime" label="开始时间">
+								</el-table-column>
+								<el-table-column prop="auctionendtime" label="结束时间">
+								</el-table-column>
+								<el-table-column prop="auctionstartprice" label="起拍价">
+								</el-table-column>
+								<el-table-column label="图片">
+									<template slot-scope="scope">
+										<el-image style="width: 100px; height: 100px" :src="scope.row.pic" :preview-src-list="picList">
+										</el-image>
+									</template>
+								</el-table-column>
+								<el-table-column label="操作">
+									<template slot-scope="temp">
+										<el-button size="mini" @click="goAuction('竞拍页.html',temp.row)">竞拍</el-button>
+									</template>
+								</el-table-column>
+							</el-table>
+						</template>
+						<template>
+							<div class="block">
+								<el-pagination @size-change="handleSizeChange" :page-sizes="[1,5, 10, 20, 50]" @current-change="handleCurrentChange" :current-page.sync="pageNum" :page-size="pageList.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageList.total">
+								</el-pagination>
+							</div>
+						</template>
+					</div>
+				</el-col>
+				<el-col :span="2">
+					<div class="grid-content bg-purple">
+
+					</div>
+				</el-col>
+			</el-row>
+		</div>
+	</body>
+	<script>
+		var managementApp = new Vue({
+			data: {
+				pageNum: 1,
+				pageSize: 5,
+				sizeForm: {
+					auctionname: '',
+					auctionstarttime: '',
+					auctionendtime: '',
+					auctiondesc: '',
+					auctionstartprice: ''
+				},
+				pageList: {},
+				AuctionData: [{
+					auctionid: 1,
+					auctionname: '明朝景德镇瓷碗',
+					auctionstartprice: 1000000,
+					auctionupset: 900000,
+					auctionstarttime: '2020-03-11 12:01:01',
+					auctionendtime: '2020-03-11 13:01:01',
+					auctiondesc: '洒洒水啦',
+					pic: 'images/ad20.jpg'
+				}],
+				picList: []
+			},
+			methods: {
+				onSubmit() {
+					_this = this;
+					$.ajax(`http://127.0.0.1:8080/Auction/api/items/pageList/${_this.pageNum}/${_this.pageSize}/${1}/${1}`, {
+						type: "post",
+						contentType: "application/json",
+						data: JSON.stringify(_this.sizeForm),
+						dataType: "json",
+						success(msg) {
+							_this.pageList = msg;
+							_this.picList = [];
+							_this.pageList.list.forEach(item => {
+								_this.picList.push(item.pic);
+							});
+						}
+					});
+				},
+				handleSizeChange(val) {
+					this.pageSize = val;
+					this.onSubmit();
+				},
+				handleCurrentChange(val) {
+					this.pageNum = val;
+					this.onSubmit();
+				},
+				goAuction(url, goods) {
+					if(indexApp.user == null) {
+						alert('请先登录');
+						indexApp.showView('竞拍者登录1.html');
+						return;
+					}
+					window.sessionStorage.setItem("goods", JSON.stringify(goods))
+					indexApp.showView(url);
+				}
+			},
+			mounted() {
+				_this = this;
+				$.ajax(`http://127.0.0.1:8080/Auction/api/items/pageList/${_this.pageNum}/${_this.pageSize}/${1}/${1}`, {
+					type: "post",
+					contentType: "application/json",
+					data: JSON.stringify(_this.sizeForm),
+					dataType: "json",
+					success(msg) {
+						_this.pageList = msg;
+						_this.picList = [];
+						_this.pageList.list.forEach(item => {
+							_this.picList.push(item.pic);
+						});
+					}
+				});
+			},
+		}).$mount(".managementApp");
+	</script>
+
+</html>
